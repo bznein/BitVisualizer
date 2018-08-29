@@ -33,6 +33,8 @@
 #include <QtCharts/QLineSeries>
 #include <QtNetwork/QtNetwork>
 #include <QDateTime>
+#include <QDateTimeAxis>
+#include <QValueAxis>
 #include <iostream>
 
 QT_CHARTS_USE_NAMESPACE
@@ -48,7 +50,6 @@ int main(int argc, char *argv[])
     QChart * chart;
     QNetworkAccessManager networkManager;
 
-
     QObject::connect(&networkManager, &QNetworkAccessManager::finished,
                      [&](QNetworkReply* reply){
         //this lambda is called when the reply is received
@@ -61,8 +62,8 @@ int main(int argc, char *argv[])
             QJsonObject jsonObject= QJsonDocument::fromJson(reply->readAll()).object();
             QString last= jsonObject["last"].toString();
             QString timestamp= jsonObject["timestamp"].toString();
-            series->append(timestamp.toDouble(), last.toDouble());
-            chart->axisX()->setRange(timestamp.toDouble()-100,timestamp.toDouble()+100);
+            series->append(QDateTime::currentMSecsSinceEpoch(), last.toDouble());
+
             chart->axisY()->setRange(5000,7000);
         }
         reply->deleteLater();
@@ -79,14 +80,30 @@ int main(int argc, char *argv[])
     timer.start(10000);
 
 
+
+
 //![3]
     chart = new QChart();
     chart->legend()->hide();
     chart->addSeries(series);
+
+    QDateTimeAxis *axisX = new QDateTimeAxis;
+    axisX->setTickCount(10);
+    axisX->setFormat("hh:mm:ss");
+    axisX->setTitleText("Date");
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis *axisY = new QValueAxis;
+    axisY->setLabelFormat("%i");
+    axisY->setTitleText("BTC TO EUR CONVERSION");
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
     chart->setAnimationOptions(QChart::AllAnimations);
 
-    chart->createDefaultAxes();
     chart->setTitle("BTC/EUR Conversion");
+    chart->axisX()->setRange(QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()),QDateTime::fromMSecsSinceEpoch(QDateTime::currentMSecsSinceEpoch()+150000) );
+    networkManager.get(networkRequest);
 //![3]
 
 //![4]
