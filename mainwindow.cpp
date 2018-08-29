@@ -39,8 +39,8 @@ mainWindow::mainWindow()
 
             if (isnan(_maxVal) && isnan(_minVal))
             {
-                _maxVal=last+100;
-                _minVal=last-100;
+                _maxVal=last+_initial_range;
+                _minVal=last-_initial_range;
 
                 _chart->axisY()->setRange(_minVal,_maxVal);
             }

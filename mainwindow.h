@@ -45,6 +45,7 @@ private:
       Since the actual value is an always positive ratio, -1 is a valid initializer */
    double _maxVal=nan("");
    double _minVal=nan("");
+   int _initial_range=50;
 
 
 
