@@ -2,7 +2,11 @@ QT += charts
 QT += network
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    mainwindow.cpp
 
 target = bitVisualizer
 INSTALLS += target
+
+HEADERS += \
+    mainwindow.h
