@@ -3,6 +3,9 @@
 #include <algorithm>
 mainWindow::mainWindow()
 {
+     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+
+    _curValue=new QGraphicsSimpleTextItem();
     _series=new QLineSeries();
     qint64 _curTime=QDateTime::currentMSecsSinceEpoch();
     _startTime=QDateTime::fromMSecsSinceEpoch(_curTime);
@@ -15,7 +18,8 @@ mainWindow::mainWindow()
         } else {
             //parse the reply JSON and display result in the UI
             QJsonObject jsonObject= QJsonDocument::fromJson(reply->readAll()).object();
-            double last= jsonObject["last"].toString().toDouble();
+            QString lastS=jsonObject["last"].toString();
+            double last= lastS.toDouble();
             QString timestamp= jsonObject["timestamp"].toString();
 
             if (_presentSamples<_totalSamples)
@@ -39,6 +43,8 @@ mainWindow::mainWindow()
              * consider, using an auxiliary series, and after a number of iteration clearing alternatively one
              * of the two and setting the other one as the one used for the drawing */
             _series->append(QDateTime::currentMSecsSinceEpoch(), last);
+            _curValue->setPos(this->size().width()*0.6, this->size().height()*0.01);
+            _curValue->setText("Current value: " + lastS);
         }
         reply->deleteLater();
 
@@ -62,7 +68,7 @@ mainWindow::mainWindow()
     QDateTimeAxis *axisX = new QDateTimeAxis;
     axisX->setTickCount(10);
     axisX->setFormat("hh:mm:ss");
-    axisX->setTitleText("Date");
+    axisX->setTitleText("Time of the day");
     _chart->addAxis(axisX, Qt::AlignBottom);
     _series->attachAxis(axisX);
 
@@ -83,9 +89,21 @@ mainWindow::mainWindow()
 
     _chart->axisY()->setRange(_minVal,_maxVal);
 
+    _curValue = new QGraphicsSimpleTextItem(_chart);
+    _curValue->setFont(QFont("Arial",25));
     setCentralWidget(_chartView);
 
 }
+
+void mainWindow::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+   // Your code here.
+
+   _curValue->setPos(this->size().width()*0.6, this->size().height()*0.01);
+}
+
+
 
 mainWindow::~mainWindow()
 {

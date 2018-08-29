@@ -10,6 +10,8 @@
 #include <QDateTimeAxis>
 #include <QValueAxis>
 #include <QtWidgets/QApplication>
+#include <QLabel>
+#include <QLayout>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -17,7 +19,9 @@ class mainWindow : public QMainWindow
 {
 public:
     mainWindow();
-    ~mainWindow();
+    ~mainWindow() override;
+
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
    QLineSeries *_series; // Series of btc/eur values
@@ -25,8 +29,9 @@ private:
    /* Visualization members */
    QChartView *_chartView;
    QChart * _chart;
-   const int _refreshWaitTime=1000; /* 10 seconds */
-   const int _totalTimeShown=15000; /* 150 seconds of history */
+   QGraphicsSimpleTextItem *_curValue;
+   const int _refreshWaitTime=10000; /* 10 seconds */
+   const int _totalTimeShown=150000; /* 150 seconds of history */
    const int _totalSamples=_totalTimeShown/_refreshWaitTime;
 
    QDateTime _startTime, _endTime;
