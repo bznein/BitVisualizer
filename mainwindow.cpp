@@ -9,6 +9,7 @@ mainWindow::mainWindow()
      /* Initialization of most variables, described in header file */
     _curValue=new QGraphicsSimpleTextItem();
     _series=new QLineSeries();
+    _series->setPointsVisible();
     qint64 _curTime=QDateTime::currentMSecsSinceEpoch();
     _startTime=QDateTime::fromMSecsSinceEpoch(_curTime);
     _endTime=QDateTime::fromMSecsSinceEpoch(_curTime+_totalTimeShown);
@@ -36,7 +37,14 @@ mainWindow::mainWindow()
                 _chart->axisX()->setRange(_startTime,_endTime);
             }
 
-            if (last>_maxVal || last<_minVal)
+            if (isnan(_maxVal) && isnan(_minVal))
+            {
+                _maxVal=last+100;
+                _minVal=last-100;
+
+                _chart->axisY()->setRange(_minVal,_maxVal);
+            }
+            else if (last>_maxVal || last<_minVal)
             {
                 _maxVal=std::max(last,_maxVal);
                 _minVal=std::min(last,_minVal);
@@ -66,6 +74,7 @@ mainWindow::mainWindow()
     });
     _timer.start(_refreshWaitTime);
 
+    _networkManager.get(_networkRequest);
 
     /* Initialization of the chart-related variables*/
     _chart = new QChart();
@@ -88,13 +97,10 @@ mainWindow::mainWindow()
 
     _chart->setTitle("BTC/EUR Conversion");
     _chart->axisX()->setRange(_startTime,_endTime);
-    _networkManager.get(_networkRequest);
 
     _chartView = new QChartView(_chart);
     _chartView->setRenderHint(QPainter::Antialiasing);
 
-
-    _chart->axisY()->setRange(_minVal,_maxVal);
 
     _curValue = new QGraphicsSimpleTextItem(_chart);
     _curValue->setFont(QFont("Arial",25));

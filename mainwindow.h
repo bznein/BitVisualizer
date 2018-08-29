@@ -12,6 +12,8 @@
 #include <QtWidgets/QApplication>
 #include <QLabel>
 #include <QLayout>
+#include <QPen>
+#include <math.h>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -39,9 +41,10 @@ private:
    QDateTime _startTime, _endTime; /* Range for the x-axis */
    int _presentSamples=0;
 
-   /* Initial guesses for the max and min val, they will get updated, used for the y-axis */
-   double _maxVal=7000;
-   double _minVal=5000;
+   /* Initial guesses for the max and min val, they will get updated, used for the y-axis
+      Since the actual value is an always positive ratio, -1 is a valid initializer */
+   double _maxVal=nan("");
+   double _minVal=nan("");
 
 
 
