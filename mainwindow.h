@@ -30,14 +30,16 @@ private:
    QChartView *_chartView;
    QChart * _chart;
    QGraphicsSimpleTextItem *_curValue;
+   QValueAxis *_axisY;
+   QDateTimeAxis *_axisX;
    const int _refreshWaitTime=10000; /* 10 seconds */
    const int _totalTimeShown=150000; /* 150 seconds of history */
-   const int _totalSamples=_totalTimeShown/_refreshWaitTime;
+   const int _totalSamples=_totalTimeShown/_refreshWaitTime; /* To know when the linechart is full */
 
-   QDateTime _startTime, _endTime;
+   QDateTime _startTime, _endTime; /* Range for the x-axis */
    int _presentSamples=0;
 
-   /* Initial guesses for the max and min val, they will get updated */
+   /* Initial guesses for the max and min val, they will get updated, used for the y-axis */
    double _maxVal=7000;
    double _minVal=5000;
 

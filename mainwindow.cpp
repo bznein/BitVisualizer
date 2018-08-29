@@ -5,16 +5,21 @@ mainWindow::mainWindow()
 {
      setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
+
+     /* Initialization of most variables, described in header file */
     _curValue=new QGraphicsSimpleTextItem();
     _series=new QLineSeries();
     qint64 _curTime=QDateTime::currentMSecsSinceEpoch();
     _startTime=QDateTime::fromMSecsSinceEpoch(_curTime);
     _endTime=QDateTime::fromMSecsSinceEpoch(_curTime+_totalTimeShown);
+
+
+    /* Creation of the callback to execute when the API request is processed */
     QObject::connect(&_networkManager, &QNetworkAccessManager::finished,
                      [&](QNetworkReply* reply){
 
         if(reply->error() != QNetworkReply::NoError){
-            /* Check For Error */
+            /* We just do nothing and wait for the next refresh */
         } else {
             //parse the reply JSON and display result in the UI
             QJsonObject jsonObject= QJsonDocument::fromJson(reply->readAll()).object();
@@ -50,33 +55,35 @@ mainWindow::mainWindow()
 
     });
 
+    /* Creation of the API Query */
     QUrl url("https://www.bitstamp.net/api/v2/ticker/btceur/");
     _networkRequest=QNetworkRequest(url);
 
 
+    /* We bind the execution of the query to a timer */
     QObject::connect(&_timer, &QTimer::timeout, [&](){
         _networkManager.get(_networkRequest);
     });
     _timer.start(_refreshWaitTime);
 
 
-
+    /* Initialization of the chart-related variables*/
     _chart = new QChart();
     _chart->legend()->hide();
     _chart->addSeries(_series);
 
-    QDateTimeAxis *axisX = new QDateTimeAxis;
-    axisX->setTickCount(10);
-    axisX->setFormat("hh:mm:ss");
-    axisX->setTitleText("Time of the day");
-    _chart->addAxis(axisX, Qt::AlignBottom);
-    _series->attachAxis(axisX);
+    _axisX = new QDateTimeAxis;
+    _axisX->setTickCount(10);
+    _axisX->setFormat("hh:mm:ss");
+    _axisX->setTitleText("Time of the day");
+    _chart->addAxis(_axisX, Qt::AlignBottom);
+    _series->attachAxis(_axisX);
 
-    QValueAxis *axisY = new QValueAxis;
-    axisY->setLabelFormat("%i");
-    axisY->setTitleText("BTC TO EUR CONVERSION");
-    _chart->addAxis(axisY, Qt::AlignLeft);
-    _series->attachAxis(axisY);
+    _axisY= new QValueAxis;
+    _axisY->setLabelFormat("%i");
+    _axisY->setTitleText("BTC TO EUR CONVERSION");
+    _chart->addAxis(_axisY, Qt::AlignLeft);
+    _series->attachAxis(_axisY);
     _chart->setAnimationOptions(QChart::SeriesAnimations);
 
     _chart->setTitle("BTC/EUR Conversion");
@@ -98,8 +105,6 @@ mainWindow::mainWindow()
 void mainWindow::resizeEvent(QResizeEvent* event)
 {
    QMainWindow::resizeEvent(event);
-   // Your code here.
-
    _curValue->setPos(this->size().width()*0.6, this->size().height()*0.01);
 }
 
@@ -108,4 +113,9 @@ void mainWindow::resizeEvent(QResizeEvent* event)
 mainWindow::~mainWindow()
 {
     delete _series;
+    delete _chart;
+    delete _chartView;
+    delete _curValue;
+    delete _axisX;
+    delete _axisY;
 }

@@ -28,9 +28,7 @@
 ****************************************************************************/
 
 #include <QtWidgets/QApplication>
-#include <QDateTime>
-#include <QDateTimeAxis>
-#include <QValueAxis>
+
 #include <iostream>
 
 #include "mainwindow.h"

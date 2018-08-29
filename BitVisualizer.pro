@@ -6,7 +6,6 @@ SOURCES += \
     mainwindow.cpp
 
 target = bitVisualizer
-INSTALLS += target
 
 HEADERS += \
     mainwindow.h
