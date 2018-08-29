@@ -25,11 +25,16 @@ private:
    /* Visualization members */
    QChartView *_chartView;
    QChart * _chart;
-   const int _refreshWaitTime=10000; /* 10 seconds */
-   const int _totalTimeShown=150000; /* 150 seconds of history */
+   const int _refreshWaitTime=1000; /* 10 seconds */
+   const int _totalTimeShown=15000; /* 150 seconds of history */
    const int _totalSamples=_totalTimeShown/_refreshWaitTime;
 
    QDateTime _startTime, _endTime;
+   int _presentSamples=0;
+
+   /* Initial guesses for the max and min val, they will get updated */
+   double _maxVal=7000;
+   double _minVal=5000;
 
 
 
