@@ -22,16 +22,12 @@ class mainWindow : public QMainWindow
 public:
     mainWindow();
     ~mainWindow() override;
-
-    void resizeEvent(QResizeEvent* event) override;
-
 private:
    QLineSeries *_series; // Series of btc/eur values
 
    /* Visualization members */
    QChartView *_chartView;
    QChart * _chart;
-   QGraphicsSimpleTextItem *_curValue;
    QValueAxis *_axisY;
    QDateTimeAxis *_axisX;
    const int _refreshWaitTime=10000; /* 10 seconds */

@@ -7,8 +7,7 @@ mainWindow::mainWindow()
 
 
      /* Initialization of most variables, described in header file */
-    _curValue=new QGraphicsSimpleTextItem();
-    _series=new QLineSeries();
+     _series=new QLineSeries();
     _series->setPointsVisible();
     qint64 _curTime=QDateTime::currentMSecsSinceEpoch();
     _startTime=QDateTime::fromMSecsSinceEpoch(_curTime);
@@ -56,8 +55,7 @@ mainWindow::mainWindow()
              * consider, using an auxiliary series, and after a number of iteration clearing alternatively one
              * of the two and setting the other one as the one used for the drawing */
             _series->append(QDateTime::currentMSecsSinceEpoch(), last);
-            _curValue->setPos(this->size().width()*0.6, this->size().height()*0.01);
-            _curValue->setText("Current value: " + lastS);
+            _chart->setTitle("Current value: " + lastS);
         }
         reply->deleteLater();
 
@@ -95,24 +93,17 @@ mainWindow::mainWindow()
     _series->attachAxis(_axisY);
     _chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    _chart->setTitle("BTC/EUR Conversion");
     _chart->axisX()->setRange(_startTime,_endTime);
 
     _chartView = new QChartView(_chart);
     _chartView->setRenderHint(QPainter::Antialiasing);
 
 
-    _curValue = new QGraphicsSimpleTextItem(_chart);
-    _curValue->setFont(QFont("Arial",25));
+
     setCentralWidget(_chartView);
 
 }
 
-void mainWindow::resizeEvent(QResizeEvent* event)
-{
-   QMainWindow::resizeEvent(event);
-   _curValue->setPos(this->size().width()*0.6, this->size().height()*0.01);
-}
 
 
 
@@ -121,7 +112,6 @@ mainWindow::~mainWindow()
     delete _series;
     delete _chart;
     delete _chartView;
-    delete _curValue;
     delete _axisX;
     delete _axisY;
 }
